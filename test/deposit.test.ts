@@ -11,13 +11,17 @@ test.only("Depositar ativos em uma conta.", async () => {
     }
     const responseSignup = await axios.post("http://localhost:3000/signup", inputSignup);
     const outputSignup = responseSignup.data;
-    console.log("outputSignup", outputSignup);
+
     const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`);
     const outputGetAccount = responseGetAccount.data;
 
+    expect(outputGetAccount.name).toBe(inputSignup.name);
+    expect(outputGetAccount.account_id).toBeDefined();
+
+    console.log(outputGetAccount, 'outputGetAccount');
     const depositInput = {
-        accountId: outputGetAccount.accountId, 
-        assetId: "BTC", 
+        account_id: outputGetAccount.account_id, 
+        asset_id: "BTC", 
         quantity: 10
     }
 

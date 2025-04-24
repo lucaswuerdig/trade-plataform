@@ -1,12 +1,11 @@
 import express, { Router, Request, Response } from "express";
 import crypto from "crypto";
-import { db, pgp } from "./db";
+import { db } from "./db";
 import { validateCpf } from "./validateCpf";
 
 const router = Router();
 
 // const accounts: any = [];
-
 
 function isValidName (name: string) {
     return name.match(/[a-zA-Z] [a-zA-Z]+/);
@@ -24,6 +23,11 @@ function isValidPassword (password: string) {
     return true;
 }
 
+async function checkEmailExists (email: string) {
+    const account = await db.query("select * from ccca.account where email = $1", [email]);
+    return account.length > 0;
+}
+
 router.post("/", async (req: Request, res: Response) => {
     const input = req.body;
     if (!isValidName(input.name)) {
@@ -36,6 +40,13 @@ router.post("/", async (req: Request, res: Response) => {
             error: "Invalid email"
         });
     }
+    //TODO:: Stack de testes verar o banco antes dos testes ou usar mocks
+    // if (await checkEmailExists(input.email)) {
+    //     return res.status(422).json({
+    //         error: "Email already exists"
+    //     });
+    // }
+
     if (!validateCpf(input.document)) {
         return res.status(422).json({
             error: "Invalid document"
