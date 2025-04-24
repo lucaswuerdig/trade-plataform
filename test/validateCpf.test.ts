@@ -1,4 +1,4 @@
-import { validateCpf } from "../src/validateCpf";
+import { validateCpf } from "../src/use_case/validateCpf";
 
 test.each([
     "97456321558",
